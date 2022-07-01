@@ -3,7 +3,6 @@ package com.pragma.route.backend.image.infrastructure.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.util.Base64;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import com.pragma.route.backend.image.application.service.ImageConverterService;
 import com.pragma.route.backend.image.application.service.ImageService;
 import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerImageConvertException;
 import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerImageNotFoundException;
-import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerResourceTypeNotFoundException;
 import com.pragma.route.backend.image.infrastructure.db.repository.ImageRepository;
 import com.pragma.route.backend.image.infrastructure.service.ImageApiService;
 
@@ -39,7 +37,6 @@ public class ImageApiServiceImplTests {
 	private String stringBase;
 	private byte[] stringByte;
 	private ImageDTO imageDtoOk;
-	private ImageDTO imageDtoError;
 	private MockMultipartFile multipartFile;
 	private MockMultipartFile multipartFileError;
 	
@@ -57,13 +54,6 @@ public class ImageApiServiceImplTests {
 				.associationType(1)
 				.resourceId(1)
 				.imageBase64(stringBase)
-				.imageName("imagen")
-				.build();
-		
-		imageDtoError = ImageDTO.builder()
-				.associationType(1)
-				.resourceId(1)
-				.imageBase64(null)
 				.imageName("imagen")
 				.build();
 		

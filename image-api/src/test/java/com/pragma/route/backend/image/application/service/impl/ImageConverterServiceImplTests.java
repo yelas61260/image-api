@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.pragma.route.backend.image.application.service.ImageConverterService;
-import com.pragma.route.backend.image.application.service.impl.ImageConverterServiceImpl;
 import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerImageConvertException;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
 
