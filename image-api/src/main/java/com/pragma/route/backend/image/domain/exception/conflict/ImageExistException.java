@@ -1,13 +1,13 @@
 package com.pragma.route.backend.image.domain.exception.conflict;
 
-public class ImageManagerImageExistException extends ImageManagerConflictException {
+public class ImageExistException extends ApiConflictException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public ImageManagerImageExistException() {
+	public ImageExistException() {
 		super("Image id exist");
 	}
 

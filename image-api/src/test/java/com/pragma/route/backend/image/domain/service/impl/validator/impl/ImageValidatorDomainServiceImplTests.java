@@ -9,8 +9,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerResourceIdInvalidException;
-import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerResourceTypeNotFoundException;
+import com.pragma.route.backend.image.domain.exception.conflict.ResourceIdInvalidException;
+import com.pragma.route.backend.image.domain.exception.notfound.ResourceTypeNotFoundException;
 import com.pragma.route.backend.image.domain.model.Image;
 import com.pragma.route.backend.image.domain.service.validator.ImageValidatorDomainService;
 import com.pragma.route.backend.image.domain.service.validator.ResourceValidatorDomainService;
@@ -29,8 +29,8 @@ public class ImageValidatorDomainServiceImplTests {
 		imageValidatorDomainService = new ImageValidatorDomainServiceImpl(resourceValidatorService);
 		
 		Mockito.doNothing().when(resourceValidatorService).validateResourceTypeById(1);
-		Mockito.doThrow(ImageManagerResourceTypeNotFoundException.class).when(resourceValidatorService).validateResourceTypeById(0);
-		Mockito.doThrow(ImageManagerResourceTypeNotFoundException.class).when(resourceValidatorService).validateResourceTypeById(100);
+		Mockito.doThrow(ResourceTypeNotFoundException.class).when(resourceValidatorService).validateResourceTypeById(0);
+		Mockito.doThrow(ResourceTypeNotFoundException.class).when(resourceValidatorService).validateResourceTypeById(100);
 	}
 
 	@Test
@@ -55,8 +55,8 @@ public class ImageValidatorDomainServiceImplTests {
 				.build();
 		
 		assertDoesNotThrow(() -> imageValidatorDomainService.validateImage(imageOK));
-		assertThrows(ImageManagerResourceTypeNotFoundException.class, () -> imageValidatorDomainService.validateImage(imageERROR1));
-		assertThrows(ImageManagerResourceIdInvalidException.class, () -> imageValidatorDomainService.validateImage(imageERROR2));
+		assertThrows(ResourceTypeNotFoundException.class, () -> imageValidatorDomainService.validateImage(imageERROR1));
+		assertThrows(ResourceIdInvalidException.class, () -> imageValidatorDomainService.validateImage(imageERROR2));
 	}
 
 }

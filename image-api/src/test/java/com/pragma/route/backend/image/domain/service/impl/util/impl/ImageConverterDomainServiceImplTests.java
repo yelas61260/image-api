@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerImageConvertException;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
 import com.pragma.route.backend.image.domain.service.util.impl.ImageConverterDomainServiceImpl;
 
@@ -31,7 +31,7 @@ public class ImageConverterDomainServiceImplTests {
 		byte[] stringByteError = new byte[0];
 		
 		assertThat(imageConverterDomainService.convertImageFileToBase64String(stringByte)).isEqualTo(stringBase);
-		assertThrows(ImageManagerImageConvertException.class, () -> imageConverterDomainService.convertImageFileToBase64String(stringByteError));
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertImageFileToBase64String(stringByteError));
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class ImageConverterDomainServiceImplTests {
 		String stringError = null;
 
 		assertThat(imageConverterDomainService.convertBase64StringToImageFile(stringBase)).isEqualTo(stringByte);
-		assertThrows(ImageManagerImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(stringError));
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(stringError));
 	}
 	
 }

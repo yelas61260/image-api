@@ -1,13 +1,13 @@
 package com.pragma.route.backend.image.domain.exception.notfound;
 
-public class ImageManagerImageNotFoundException extends ImageManagerNotFoundException {
+public class ImageNotFoundException extends ApiNotFoundException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ImageManagerImageNotFoundException() {
+	public ImageNotFoundException() {
 		super("Image not found");
 	}
 

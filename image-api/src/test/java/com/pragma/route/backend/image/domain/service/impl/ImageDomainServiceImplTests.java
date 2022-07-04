@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerImageConvertException;
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerResourceIdInvalidException;
-import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerResourceTypeNotFoundException;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
+import com.pragma.route.backend.image.domain.exception.conflict.ResourceIdInvalidException;
+import com.pragma.route.backend.image.domain.exception.notfound.ResourceTypeNotFoundException;
 import com.pragma.route.backend.image.domain.model.Image;
 import com.pragma.route.backend.image.domain.service.ImageDomainService;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
@@ -78,19 +78,19 @@ public class ImageDomainServiceImplTests {
 				.build();
 		
 		Mockito.when(imageConverterDomainService.convertBase64StringToImageFile(stringBase)).thenReturn(stringByte);
-		Mockito.doThrow(ImageManagerImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile("");
-		Mockito.doThrow(ImageManagerImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(null);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile("");
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(null);
 		
 		Mockito.when(imageConverterDomainService.convertImageFileToBase64String(stringByte)).thenReturn(stringBase);
-		Mockito.doThrow(ImageManagerImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(new byte[0]);
-		Mockito.doThrow(ImageManagerImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(null);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(new byte[0]);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(null);
 		
 		Mockito.doNothing().when(imageValidatorService).validateImage(imageOK1);
 		Mockito.doNothing().when(imageValidatorService).validateImage(imageOK2);
-		Mockito.doThrow(ImageManagerResourceTypeNotFoundException.class).when(imageValidatorService).validateImage(imageERROR1);
-		Mockito.doThrow(ImageManagerResourceIdInvalidException.class).when(imageValidatorService).validateImage(imageERROR2);
-		Mockito.doThrow(ImageManagerResourceTypeNotFoundException.class).when(imageValidatorService).validateImage(imageERROR3);
-		Mockito.doThrow(ImageManagerResourceIdInvalidException.class).when(imageValidatorService).validateImage(imageERROR4);
+		Mockito.doThrow(ResourceTypeNotFoundException.class).when(imageValidatorService).validateImage(imageERROR1);
+		Mockito.doThrow(ResourceIdInvalidException.class).when(imageValidatorService).validateImage(imageERROR2);
+		Mockito.doThrow(ResourceTypeNotFoundException.class).when(imageValidatorService).validateImage(imageERROR3);
+		Mockito.doThrow(ResourceIdInvalidException.class).when(imageValidatorService).validateImage(imageERROR4);
 		
 	}
 
@@ -101,10 +101,10 @@ public class ImageDomainServiceImplTests {
 		byte[] stringByte = Base64.getDecoder().decode(stringBase);
 		
 		assertThat(imageDomainService.prepareToCreate(1, 1, "imagen", stringByte)).isEqualTo(imageOK1);
-		assertThrows(ImageManagerResourceTypeNotFoundException.class, () -> imageDomainService.prepareToCreate(0, 1, "imagen", stringByte));
-		assertThrows(ImageManagerResourceIdInvalidException.class, () -> imageDomainService.prepareToCreate(1, 0, "imagen", stringByte));
-		assertThrows(ImageManagerImageConvertException.class, () -> imageDomainService.prepareToCreate(1, 1, "imagen", null));
-		assertThrows(ImageManagerImageConvertException.class, () -> imageDomainService.prepareToCreate(1, 1, "imagen", new byte[0]));
+		assertThrows(ResourceTypeNotFoundException.class, () -> imageDomainService.prepareToCreate(0, 1, "imagen", stringByte));
+		assertThrows(ResourceIdInvalidException.class, () -> imageDomainService.prepareToCreate(1, 0, "imagen", stringByte));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(1, 1, "imagen", null));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(1, 1, "imagen", new byte[0]));
 	}
 
 	@Test
@@ -114,17 +114,17 @@ public class ImageDomainServiceImplTests {
 		byte[] stringByte = Base64.getDecoder().decode(stringBase);
 		
 		assertThat(imageDomainService.prepareToUpdate(1, 1, "imagen", stringByte)).isEqualTo(imageOK1);
-		assertThrows(ImageManagerResourceTypeNotFoundException.class, () -> imageDomainService.prepareToUpdate(0, 1, "imagen", stringByte));
-		assertThrows(ImageManagerResourceIdInvalidException.class, () -> imageDomainService.prepareToUpdate(1, 0, "imagen", stringByte));
-		assertThrows(ImageManagerImageConvertException.class, () -> imageDomainService.prepareToUpdate(1, 1, "imagen", null));
-		assertThrows(ImageManagerImageConvertException.class, () -> imageDomainService.prepareToUpdate(1, 1, "imagen", new byte[0]));
+		assertThrows(ResourceTypeNotFoundException.class, () -> imageDomainService.prepareToUpdate(0, 1, "imagen", stringByte));
+		assertThrows(ResourceIdInvalidException.class, () -> imageDomainService.prepareToUpdate(1, 0, "imagen", stringByte));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(1, 1, "imagen", null));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(1, 1, "imagen", new byte[0]));
 	}
 
 	@Test
 	public void getByAssociationTypeAndResourceId() {		
 		assertThat(imageDomainService.getByAssociationTypeAndResourceId(1, 1)).isEqualTo(imageOK2);
-		assertThrows(ImageManagerResourceTypeNotFoundException.class, () -> imageDomainService.getByAssociationTypeAndResourceId(0, 1));
-		assertThrows(ImageManagerResourceIdInvalidException.class, () -> imageDomainService.getByAssociationTypeAndResourceId(1, 0));
+		assertThrows(ResourceTypeNotFoundException.class, () -> imageDomainService.getByAssociationTypeAndResourceId(0, 1));
+		assertThrows(ResourceIdInvalidException.class, () -> imageDomainService.getByAssociationTypeAndResourceId(1, 0));
 	}
 
 }

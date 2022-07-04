@@ -1,6 +1,6 @@
 package com.pragma.route.backend.image.domain.service.validator.impl;
 
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerResourceIdInvalidException;
+import com.pragma.route.backend.image.domain.exception.conflict.ResourceIdInvalidException;
 import com.pragma.route.backend.image.domain.model.Image;
 import com.pragma.route.backend.image.domain.service.validator.ImageValidatorDomainService;
 import com.pragma.route.backend.image.domain.service.validator.ResourceValidatorDomainService;
@@ -15,7 +15,7 @@ public class ImageValidatorDomainServiceImpl implements ImageValidatorDomainServ
 	@Override
 	public void validateImage(Image image) {
 		if (image.getResourceId() <= 0) {
-			throw new ImageManagerResourceIdInvalidException();
+			throw new ResourceIdInvalidException();
 		}
 		resourceValidatorService.validateResourceTypeById(image.getAssociationType());
 	}

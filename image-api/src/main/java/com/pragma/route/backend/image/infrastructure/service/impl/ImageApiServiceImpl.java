@@ -7,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.pragma.route.backend.image.application.dto.ImageDTO;
 import com.pragma.route.backend.image.application.service.ImageConverterService;
 import com.pragma.route.backend.image.application.service.ImageService;
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerImageConvertException;
-import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerImageNotFoundException;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
+import com.pragma.route.backend.image.domain.exception.notfound.ImageNotFoundException;
 import com.pragma.route.backend.image.infrastructure.db.repository.ImageRepository;
 import com.pragma.route.backend.image.infrastructure.service.ImageApiService;
 
@@ -27,9 +27,9 @@ public class ImageApiServiceImpl implements ImageApiService {
 		try {
 			imageDTO = imageService.prepareToCreate(associationType, resourceId, imageFile.getName(), imageFile.getBytes());
 		} catch (IOException e) {
-			throw new ImageManagerImageConvertException();
+			throw new ImageConvertException();
 		} catch (NullPointerException e) {
-			throw new ImageManagerImageConvertException();
+			throw new ImageConvertException();
 		}
 		return imageRepository.create(imageDTO);
 	}
@@ -40,9 +40,9 @@ public class ImageApiServiceImpl implements ImageApiService {
 		try {
 			imageDTO = imageService.prepareToUpdate(associationType, resourceId, imageFile.getName(), imageFile.getBytes());
 		} catch (IOException e) {
-			throw new ImageManagerImageConvertException();
+			throw new ImageConvertException();
 		} catch (NullPointerException e) {
-			throw new ImageManagerImageConvertException();
+			throw new ImageConvertException();
 		}
 		return imageRepository.update(imageDTO);
 	}
@@ -52,7 +52,7 @@ public class ImageApiServiceImpl implements ImageApiService {
 		ImageDTO imageDTO = imageService.getByAssociationTypeAndResourceId(associationType, resourceId);
 		imageDTO = imageRepository.getById(imageDTO);
 		if (imageDTO == null) {
-			throw new ImageManagerImageNotFoundException();
+			throw new ImageNotFoundException();
 		}
 		return imageDTO.getImageBase64();
 	}
@@ -62,7 +62,7 @@ public class ImageApiServiceImpl implements ImageApiService {
 		ImageDTO imageDTO = imageService.getByAssociationTypeAndResourceId(associationType, resourceId);
 		imageDTO = imageRepository.getById(imageDTO);
 		if (imageDTO == null) {
-			throw new ImageManagerImageNotFoundException();
+			throw new ImageNotFoundException();
 		}
 		return imageConverterService.convertBase64StringToImageFile(imageDTO.getImageBase64());
 	}

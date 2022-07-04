@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.pragma.route.backend.image.domain.exception.conflict.ImageManagerConflictException;
-import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerNotFoundException;
+import com.pragma.route.backend.image.domain.exception.conflict.ApiConflictException;
+import com.pragma.route.backend.image.domain.exception.notfound.ApiNotFoundException;
 import com.pragma.route.backend.image.infrastructure.response.ResponseDTO;
 
 @ControllerAdvice
@@ -24,14 +24,14 @@ public class ExceptionGlobalHandler {
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	@ExceptionHandler(ImageManagerNotFoundException.class)
-	public ResponseEntity<ResponseDTO> notFoundException(ImageManagerNotFoundException e){
+	@ExceptionHandler(ApiNotFoundException.class)
+	public ResponseEntity<ResponseDTO> notFoundException(ApiNotFoundException e){
 		ResponseDTO response = new ResponseDTO(null, HttpStatus.NOT_FOUND.value(), "error", e.getLocalizedMessage());
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.NOT_FOUND);
 	}
 
-	@ExceptionHandler(ImageManagerConflictException.class)
-	public ResponseEntity<ResponseDTO> conflictException(ImageManagerConflictException e){
+	@ExceptionHandler(ApiConflictException.class)
+	public ResponseEntity<ResponseDTO> conflictException(ApiConflictException e){
 		ResponseDTO response = new ResponseDTO(null, HttpStatus.CONFLICT.value(), "error", e.getLocalizedMessage());
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.CONFLICT);
 	}

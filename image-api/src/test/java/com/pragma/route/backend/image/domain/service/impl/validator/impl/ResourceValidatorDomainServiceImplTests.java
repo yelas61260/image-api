@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pragma.route.backend.image.domain.exception.notfound.ImageManagerResourceTypeNotFoundException;
+import com.pragma.route.backend.image.domain.exception.notfound.ResourceTypeNotFoundException;
 import com.pragma.route.backend.image.domain.service.validator.ResourceValidatorDomainService;
 import com.pragma.route.backend.image.domain.service.validator.impl.ResourceValidatorDomainServiceImpl;
 
@@ -24,8 +24,8 @@ public class ResourceValidatorDomainServiceImplTests {
 	@Test
 	public void validateResourceTypeById() {
 		assertDoesNotThrow(() -> resourceValidatorDomainService.validateResourceTypeById(1));
-		assertThrows(ImageManagerResourceTypeNotFoundException.class, () -> resourceValidatorDomainService.validateResourceTypeById(100));
-		assertThrows(ImageManagerResourceTypeNotFoundException.class, () -> resourceValidatorDomainService.validateResourceTypeById(0));
+		assertThrows(ResourceTypeNotFoundException.class, () -> resourceValidatorDomainService.validateResourceTypeById(100));
+		assertThrows(ResourceTypeNotFoundException.class, () -> resourceValidatorDomainService.validateResourceTypeById(0));
 	}
 
 }
