@@ -14,25 +14,25 @@ public class ExceptionGlobalHandler {
 	
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ResponseDTO> runtimeException(RuntimeException e) {
-		ResponseDTO response = new ResponseDTO(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "error", e.getMessage());
+		ResponseDTO response = new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "error", e.getMessage());
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ResponseDTO> exception(Exception e) {
-		ResponseDTO response = new ResponseDTO(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "error", e.getMessage());
+		ResponseDTO response = new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "error", e.getMessage());
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ApiNotFoundException.class)
 	public ResponseEntity<ResponseDTO> notFoundException(ApiNotFoundException e){
-		ResponseDTO response = new ResponseDTO(null, HttpStatus.NOT_FOUND.value(), "error", e.getLocalizedMessage());
+		ResponseDTO response = new ResponseDTO(HttpStatus.NOT_FOUND.value(), "error", e.getLocalizedMessage());
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(ApiConflictException.class)
 	public ResponseEntity<ResponseDTO> conflictException(ApiConflictException e){
-		ResponseDTO response = new ResponseDTO(null, HttpStatus.CONFLICT.value(), "error", e.getLocalizedMessage());
+		ResponseDTO response = new ResponseDTO(HttpStatus.CONFLICT.value(), "error", e.getLocalizedMessage());
 		return new ResponseEntity<ResponseDTO>(response, HttpStatus.CONFLICT);
 	}
 }

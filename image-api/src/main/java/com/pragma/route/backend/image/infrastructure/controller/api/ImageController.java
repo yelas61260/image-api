@@ -13,9 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pragma.route.backend.image.application.dto.ImageDTO;
 import com.pragma.route.backend.image.infrastructure.response.ResponseDTO;
 import com.pragma.route.backend.image.infrastructure.service.ImageApiService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -25,25 +30,79 @@ public class ImageController {
 
 	private final ImageApiService imageApiService;
 	
+	@Operation(summary = "Almacenar una imagen")
+    @ApiResponse(responseCode = "200", description = "Imagen almacenada con exito")
+    @ApiResponse(responseCode = "409", description = "Existe un conflicto en la peticion",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "404", description = "Se mando la peticion con un recurso que no existe",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "500", description = "Ocurrio un error inesperado",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
 	@PostMapping("/{associationType}/{resourceId}")
-	public ResponseEntity<ResponseDTO> create(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId,
+	public ResponseEntity<ImageDTO> create(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId,
 			@RequestParam(value = "image", required = true) MultipartFile imageFile) {
-		ResponseDTO response = new ResponseDTO(imageApiService.create(associationType, resourceId, imageFile), HttpStatus.OK.value(), "success");
-		return new ResponseEntity<ResponseDTO>(response, HttpStatus.OK);
+		return new ResponseEntity<ImageDTO>(imageApiService.create(associationType, resourceId, imageFile), HttpStatus.OK);
 	}
 	
+	@Operation(summary = "Actualizar una imagen")
+    @ApiResponse(responseCode = "200", description = "Imagen actualizada con exito")
+    @ApiResponse(responseCode = "409", description = "Existe un conflicto en la peticion",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "404", description = "Se mando la peticion con un recurso que no existe",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "500", description = "Ocurrio un error inesperado",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
 	@PutMapping("/{associationType}/{resourceId}")
-	public ResponseEntity<ResponseDTO> update(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId,
+	public ResponseEntity<ImageDTO> update(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId,
 			@RequestParam(value = "image", required = true) MultipartFile imageFile) {
-		ResponseDTO response = new ResponseDTO(imageApiService.update(associationType, resourceId, imageFile), HttpStatus.OK.value(), "success");
-		return new ResponseEntity<ResponseDTO>(response, HttpStatus.OK);
+		return new ResponseEntity<ImageDTO>(imageApiService.update(associationType, resourceId, imageFile), HttpStatus.OK);
 	}
 	
+	@Operation(summary = "Solicitar una imagen en base 64 asociada a un recurso indicando el identificador del tipo de recurso y el id del recurso")
+    @ApiResponse(responseCode = "200", description = "Solicitud exitosa")
+    @ApiResponse(responseCode = "409", description = "Existe un conflicto en la peticion",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "404", description = "El recurso solicitado no existe",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "500", description = "Ocurrio un error inesperado",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
 	@GetMapping("/{associationType}/{resourceId}/base64")
 	public @ResponseBody String getImageBase64(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId) {
 		return imageApiService.getImageBase64(associationType, resourceId);
 	}
 	
+	@Operation(summary = "Solicitar una archivo de imagen asociada a un recurso indicando el identificador del tipo de recurso y el id del recurso")
+    @ApiResponse(responseCode = "200", description = "Solicitud exitosa")
+    @ApiResponse(responseCode = "409", description = "Existe un conflicto en la peticion",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "404", description = "El recurso solicitado no existe",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
+    @ApiResponse(responseCode = "500", description = "Ocurrio un error inesperado",
+    		content = {
+    				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
+    		})
 	@GetMapping(value = "/{associationType}/{resourceId}/file", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] getImageFile(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId) {
 		return imageApiService.getImageFile(associationType, resourceId);
