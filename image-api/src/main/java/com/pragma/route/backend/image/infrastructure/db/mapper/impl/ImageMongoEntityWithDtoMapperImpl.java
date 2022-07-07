@@ -2,9 +2,7 @@ package com.pragma.route.backend.image.infrastructure.db.mapper.impl;
 
 import org.springframework.stereotype.Component;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
-import com.pragma.route.backend.image.domain.constant.ImageManagerGlobalConstant;
-import com.pragma.route.backend.image.domain.constant.ImageResourceType;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 import com.pragma.route.backend.image.infrastructure.db.entity.ImageMongoEntity;
 import com.pragma.route.backend.image.infrastructure.db.mapper.ImageMongoEntityWithDtoMapper;
 
@@ -12,35 +10,18 @@ import com.pragma.route.backend.image.infrastructure.db.mapper.ImageMongoEntityW
 public class ImageMongoEntityWithDtoMapperImpl implements ImageMongoEntityWithDtoMapper {
 
 	@Override
-	public ImageDTO toDto(ImageMongoEntity imageEntity) {
-		String[] identifierSplit = imageEntity.getId().split(ImageManagerGlobalConstant.IMAGE_ID_SPLIT_CHART);
-
-		ImageResourceType resourceType = ImageResourceType
-				.findByPrefix(identifierSplit[ImageManagerGlobalConstant.IMAGE_ID_TYPE_INDEX]);
-		
-		int resourceId = Integer.parseInt(identifierSplit[ImageManagerGlobalConstant.IMAGE_ID_RESOURCE_ID_INDEX]);
-
-		return ImageDTO.builder()
+	public ImageDto toDto(ImageMongoEntity imageEntity) {
+		return ImageDto.builder()
+				.imageId(imageEntity.getId())
 				.imageBase64(imageEntity.getBodyBase64())
-				.associationType(resourceType.getId())
-				.resourceId(resourceId)
 				.imageName(imageEntity.getImageName())
 				.build();
 	}
 
 	@Override
-	public ImageMongoEntity toMongoEntity(ImageDTO imageDTO) {
-		ImageResourceType resourceType = 
-				ImageResourceType.findById(
-						imageDTO.getAssociationType()
-						);
-
+	public ImageMongoEntity toMongoEntity(ImageDto imageDTO) {
 		return ImageMongoEntity.builder()
-				.id(
-						resourceType.getPrefix()+
-						ImageManagerGlobalConstant.IMAGE_ID_SPLIT_CHART+
-						imageDTO.getResourceId()
-						)
+				.id(imageDTO.getImageId())
 				.imageName(imageDTO.getImageName())
 				.bodyBase64(imageDTO.getImageBase64())
 				.build();

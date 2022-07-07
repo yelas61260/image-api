@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 import com.pragma.route.backend.image.infrastructure.response.ResponseDTO;
 import com.pragma.route.backend.image.infrastructure.service.ImageApiService;
 
@@ -44,10 +44,9 @@ public class ImageController {
     		content = {
     				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
     		})
-	@PostMapping("/{associationType}/{resourceId}")
-	public ResponseEntity<ImageDTO> create(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId,
-			@RequestParam(value = "image", required = true) MultipartFile imageFile) {
-		return new ResponseEntity<ImageDTO>(imageApiService.create(associationType, resourceId, imageFile), HttpStatus.OK);
+	@PostMapping("/create")
+	public ResponseEntity<ImageDto> create(@RequestParam(value = "image", required = true) MultipartFile imageFile) {
+		return new ResponseEntity<ImageDto>(imageApiService.create(imageFile), HttpStatus.OK);
 	}
 	
 	@Operation(summary = "Actualizar una imagen")
@@ -64,10 +63,9 @@ public class ImageController {
     		content = {
     				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
     		})
-	@PutMapping("/{associationType}/{resourceId}")
-	public ResponseEntity<ImageDTO> update(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId,
-			@RequestParam(value = "image", required = true) MultipartFile imageFile) {
-		return new ResponseEntity<ImageDTO>(imageApiService.update(associationType, resourceId, imageFile), HttpStatus.OK);
+	@PutMapping("/{imageId}")
+	public ResponseEntity<ImageDto> update(@PathVariable("imageId") String imageId, @RequestParam(value = "image", required = true) MultipartFile imageFile) {
+		return new ResponseEntity<ImageDto>(imageApiService.update(imageId, imageFile), HttpStatus.OK);
 	}
 	
 	@Operation(summary = "Solicitar una imagen en base 64 asociada a un recurso indicando el identificador del tipo de recurso y el id del recurso")
@@ -84,9 +82,9 @@ public class ImageController {
     		content = {
     				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
     		})
-	@GetMapping("/{associationType}/{resourceId}/base64")
-	public @ResponseBody String getImageBase64(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId) {
-		return imageApiService.getImageBase64(associationType, resourceId);
+	@GetMapping("/{imageId}/base64")
+	public @ResponseBody String getImageBase64(@PathVariable("imageId") String imageId) {
+		return imageApiService.getImageBase64(imageId);
 	}
 	
 	@Operation(summary = "Solicitar una archivo de imagen asociada a un recurso indicando el identificador del tipo de recurso y el id del recurso")
@@ -103,9 +101,9 @@ public class ImageController {
     		content = {
     				@Content(mediaType = "application/json" , schema = @Schema(implementation = ResponseDTO.class))
     		})
-	@GetMapping(value = "/{associationType}/{resourceId}/file", produces = MediaType.IMAGE_JPEG_VALUE)
-	public @ResponseBody byte[] getImageFile(@PathVariable("associationType") int associationType, @PathVariable("resourceId") int resourceId) {
-		return imageApiService.getImageFile(associationType, resourceId);
+	@GetMapping(value = "/{imageId}/file", produces = MediaType.IMAGE_JPEG_VALUE)
+	public @ResponseBody byte[] getImageFile(@PathVariable("imageId") String imageId) {
+		return imageApiService.getImageFile(imageId);
 	}
 	
 }

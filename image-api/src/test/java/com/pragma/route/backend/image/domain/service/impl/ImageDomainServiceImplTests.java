@@ -3,18 +3,17 @@ package com.pragma.route.backend.image.domain.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Base64;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.pragma.route.backend.image.ImageDataTests;
+import com.pragma.route.backend.image.ImageFileDataTests;
 import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
-import com.pragma.route.backend.image.domain.exception.conflict.ResourceIdInvalidException;
-import com.pragma.route.backend.image.domain.exception.notfound.ResourceTypeNotFoundException;
-import com.pragma.route.backend.image.domain.model.Image;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageIdConflictException;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageIdRequiredException;
 import com.pragma.route.backend.image.domain.service.ImageDomainService;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
 import com.pragma.route.backend.image.domain.service.validator.ImageValidatorDomainService;
@@ -23,108 +22,85 @@ import com.pragma.route.backend.image.domain.service.validator.ImageValidatorDom
 public class ImageDomainServiceImplTests {
 	
 	@Mock
-	private ImageValidatorDomainService imageValidatorService;
+	private ImageValidatorDomainService imageValidatorDomainService;
 	
 	@Mock
 	private ImageConverterDomainService imageConverterDomainService;
 	
 	private ImageDomainService imageDomainService;
 	
-	private Image imageOK1;
-	private Image imageOK2;
-	
 	@BeforeEach
 	public void setup() {
-		imageDomainService = new ImageDomainServiceImpl(imageValidatorService, imageConverterDomainService);
+		imageDomainService = new ImageDomainServiceImpl(imageValidatorDomainService, imageConverterDomainService);		
+
+		Mockito.when(imageConverterDomainService.convertImageFileToBase64String(ImageFileDataTests.stringByteOk)).thenReturn(ImageFileDataTests.stringBaseOk);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorEmpty);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorNull);
+		Mockito.when(imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).thenReturn(ImageFileDataTests.stringByteOk);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull);
 		
-		String originalString = "Contenido";
-		String stringBase = Base64.getEncoder().encodeToString(originalString.getBytes());
-		byte[] stringByte = Base64.getDecoder().decode(stringBase);
-		
-		imageOK1 = Image.builder()
-				.associationType(1)
-				.resourceId(1)
-				.imageName("imagen")
-				.bodyBase64(stringBase)
-				.build();
-		
-		imageOK2 = Image.builder()
-				.associationType(1)
-				.resourceId(1)
-				.build();
-		
-		Image imageERROR1 = Image.builder()
-				.associationType(0)
-				.resourceId(1)
-				.imageName("imagen")
-				.bodyBase64(stringBase)
-				.build();
-		
-		Image imageERROR2 = Image.builder()
-				.associationType(1)
-				.resourceId(0)
-				.imageName("imagen")
-				.bodyBase64(stringBase)
-				.build();
-		
-		Image imageERROR3 = Image.builder()
-				.associationType(0)
-				.resourceId(1)
-				.build();
-		
-		Image imageERROR4 = Image.builder()
-				.associationType(1)
-				.resourceId(0)
-				.build();
-		
-		Mockito.when(imageConverterDomainService.convertBase64StringToImageFile(stringBase)).thenReturn(stringByte);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile("");
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(null);
-		
-		Mockito.when(imageConverterDomainService.convertImageFileToBase64String(stringByte)).thenReturn(stringBase);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(new byte[0]);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(null);
-		
-		Mockito.doNothing().when(imageValidatorService).validateImage(imageOK1);
-		Mockito.doNothing().when(imageValidatorService).validateImage(imageOK2);
-		Mockito.doThrow(ResourceTypeNotFoundException.class).when(imageValidatorService).validateImage(imageERROR1);
-		Mockito.doThrow(ResourceIdInvalidException.class).when(imageValidatorService).validateImage(imageERROR2);
-		Mockito.doThrow(ResourceTypeNotFoundException.class).when(imageValidatorService).validateImage(imageERROR3);
-		Mockito.doThrow(ResourceIdInvalidException.class).when(imageValidatorService).validateImage(imageERROR4);
-		
+		Mockito.doNothing().when(imageValidatorDomainService).validateImage(ImageDataTests.imageOKToCreate);
+		Mockito.doNothing().when(imageValidatorDomainService).validateImage(ImageDataTests.imageOKCreated);
+		Mockito.doNothing().when(imageValidatorDomainService).validateImage(ImageDataTests.imageOKUpdated);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorNewNotName);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorNewNotBody);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorNewBodyEmpty);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorCreatedNotName);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorCreatedNotBody);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorCreatedBodyEmpty);		
+
+		Mockito.doNothing().when(imageValidatorDomainService).validateImage(ImageDataTests.imageOnlyId);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorCreatedIdNotName);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorCreatedIdNotBody);
+		Mockito.doThrow(ImageConvertException.class).when(imageValidatorDomainService).validateImage(ImageDataTests.imageErrorCreatedIdBodyEmpty);
 	}
 
 	@Test
 	public void prepareToCreate() {
-		String originalString = "Contenido";
-		String stringBase = Base64.getEncoder().encodeToString(originalString.getBytes());
-		byte[] stringByte = Base64.getDecoder().decode(stringBase);
-		
-		assertThat(imageDomainService.prepareToCreate(1, 1, "imagen", stringByte)).isEqualTo(imageOK1);
-		assertThrows(ResourceTypeNotFoundException.class, () -> imageDomainService.prepareToCreate(0, 1, "imagen", stringByte));
-		assertThrows(ResourceIdInvalidException.class, () -> imageDomainService.prepareToCreate(1, 0, "imagen", stringByte));
-		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(1, 1, "imagen", null));
-		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(1, 1, "imagen", new byte[0]));
+		assertThat(imageDomainService.prepareToCreate(ImageDataTests.imageOKToCreateImageEmpty, ImageFileDataTests.stringByteOk)).isEqualTo(ImageDataTests.imageOKToCreate);
+		assertThat(imageDomainService.prepareToCreate(ImageDataTests.imageOKToCreate, ImageFileDataTests.stringByteOk)).isEqualTo(ImageDataTests.imageOKToCreate);
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageErrorNewNotName, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageIdConflictException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageOKCreated, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageIdConflictException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageOKCreatedImageEmpty, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageIdConflictException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageOKUpdated, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageIdConflictException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageOKUpdatedImageEmpty, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageOKToCreateImageEmpty, ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToCreate(ImageDataTests.imageOKToCreateImageEmpty, ImageFileDataTests.stringByteErrorNull));
 	}
 
 	@Test
 	public void prepareToUpdate() {
-		String originalString = "Contenido";
-		String stringBase = Base64.getEncoder().encodeToString(originalString.getBytes());
-		byte[] stringByte = Base64.getDecoder().decode(stringBase);
+		assertThat(imageDomainService.prepareToUpdate(ImageDataTests.imageOKUpdated, ImageFileDataTests.stringByteOk)).isEqualTo(ImageDataTests.imageOKUpdated);
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKUpdated, ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKUpdated, ImageFileDataTests.stringByteErrorNull));
+
+		assertThat(imageDomainService.prepareToUpdate(ImageDataTests.imageOKCreated, ImageFileDataTests.stringByteOk)).isEqualTo(ImageDataTests.imageOKCreated);
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKCreated, ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKCreated, ImageFileDataTests.stringByteErrorNull));
+				
+		assertThat(imageDomainService.prepareToUpdate(ImageDataTests.imageOKCreatedImageEmpty, ImageFileDataTests.stringByteOk)).isEqualTo(ImageDataTests.imageOKCreated);
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKCreatedImageEmpty, ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKCreatedImageEmpty, ImageFileDataTests.stringByteErrorNull));
+				
+		assertThat(imageDomainService.prepareToUpdate(ImageDataTests.imageOKUpdatedImageEmpty, ImageFileDataTests.stringByteOk)).isEqualTo(ImageDataTests.imageOKUpdated);
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKUpdatedImageEmpty, ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKUpdatedImageEmpty, ImageFileDataTests.stringByteErrorNull));
 		
-		assertThat(imageDomainService.prepareToUpdate(1, 1, "imagen", stringByte)).isEqualTo(imageOK1);
-		assertThrows(ResourceTypeNotFoundException.class, () -> imageDomainService.prepareToUpdate(0, 1, "imagen", stringByte));
-		assertThrows(ResourceIdInvalidException.class, () -> imageDomainService.prepareToUpdate(1, 0, "imagen", stringByte));
-		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(1, 1, "imagen", null));
-		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(1, 1, "imagen", new byte[0]));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageErrorCreatedNotName, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageIdRequiredException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKToCreate, ImageFileDataTests.stringByteOk));
+		assertThrows(ImageIdRequiredException.class, () -> imageDomainService.prepareToUpdate(ImageDataTests.imageOKToCreateImageEmpty, ImageFileDataTests.stringByteOk));
 	}
 
 	@Test
-	public void getByAssociationTypeAndResourceId() {		
-		assertThat(imageDomainService.getByAssociationTypeAndResourceId(1, 1)).isEqualTo(imageOK2);
-		assertThrows(ResourceTypeNotFoundException.class, () -> imageDomainService.getByAssociationTypeAndResourceId(0, 1));
-		assertThrows(ResourceIdInvalidException.class, () -> imageDomainService.getByAssociationTypeAndResourceId(1, 0));
+	public void getById() {		
+		assertThat(imageDomainService.getById(ImageDataTests.imageOnlyId)).isEqualTo(ImageDataTests.imageOnlyId);
+		assertThrows(ImageIdRequiredException.class, () -> imageDomainService.getById(ImageDataTests.imageOnlyIdEmpty));
+		assertThrows(ImageIdRequiredException.class, () -> imageDomainService.getById(ImageDataTests.imageOnlyIdNull));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.getById(ImageDataTests.imageErrorCreatedNotName));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.getById(ImageDataTests.imageErrorCreatedNotBody));
+		assertThrows(ImageConvertException.class, () -> imageDomainService.getById(ImageDataTests.imageErrorCreatedBodyEmpty));
 	}
 
 }

@@ -5,15 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pragma.route.backend.image.domain.exception.conflict.ResourceIdInvalidException;
-import com.pragma.route.backend.image.domain.exception.notfound.ResourceTypeNotFoundException;
-import com.pragma.route.backend.image.domain.model.Image;
+import com.pragma.route.backend.image.ImageDataTests;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
 import com.pragma.route.backend.image.domain.service.validator.ImageValidatorDomainService;
-import com.pragma.route.backend.image.domain.service.validator.ResourceValidatorDomainService;
 import com.pragma.route.backend.image.domain.service.validator.impl.ImageValidatorDomainServiceImpl;
 
 @SpringBootTest
@@ -21,42 +17,22 @@ public class ImageValidatorDomainServiceImplTests {
 	
 	private ImageValidatorDomainService imageValidatorDomainService;
 	
-	@Mock
-	private ResourceValidatorDomainService resourceValidatorService;
-	
 	@BeforeEach
 	public void setup() {
-		imageValidatorDomainService = new ImageValidatorDomainServiceImpl(resourceValidatorService);
-		
-		Mockito.doNothing().when(resourceValidatorService).validateResourceTypeById(1);
-		Mockito.doThrow(ResourceTypeNotFoundException.class).when(resourceValidatorService).validateResourceTypeById(0);
-		Mockito.doThrow(ResourceTypeNotFoundException.class).when(resourceValidatorService).validateResourceTypeById(100);
+		imageValidatorDomainService = new ImageValidatorDomainServiceImpl();
 	}
 
 	@Test
 	public void validateImage() {
-		Image imageOK = Image.builder()
-				.associationType(1)
-				.resourceId(1)
-				.imageName("mi imagen")
-				.bodyBase64("content")
-				.build();
-		Image imageERROR1 = Image.builder()
-				.associationType(0)
-				.resourceId(1)
-				.imageName("mi imagen")
-				.bodyBase64("content")
-				.build();
-		Image imageERROR2 = Image.builder()
-				.associationType(1)
-				.resourceId(0)
-				.imageName("mi imagen")
-				.bodyBase64("content")
-				.build();
-		
-		assertDoesNotThrow(() -> imageValidatorDomainService.validateImage(imageOK));
-		assertThrows(ResourceTypeNotFoundException.class, () -> imageValidatorDomainService.validateImage(imageERROR1));
-		assertThrows(ResourceIdInvalidException.class, () -> imageValidatorDomainService.validateImage(imageERROR2));
+		assertDoesNotThrow(() -> imageValidatorDomainService.validateImage(ImageDataTests.imageOKToCreate));
+		assertDoesNotThrow(() -> imageValidatorDomainService.validateImage(ImageDataTests.imageOKCreated));
+		assertDoesNotThrow(() -> imageValidatorDomainService.validateImage(ImageDataTests.imageOKUpdated));
+		assertThrows(ImageConvertException.class, () -> imageValidatorDomainService.validateImage(ImageDataTests.imageErrorNewNotName));
+		assertThrows(ImageConvertException.class, () -> imageValidatorDomainService.validateImage(ImageDataTests.imageErrorNewNotBody));
+		assertThrows(ImageConvertException.class, () -> imageValidatorDomainService.validateImage(ImageDataTests.imageErrorNewBodyEmpty));
+		assertThrows(ImageConvertException.class, () -> imageValidatorDomainService.validateImage(ImageDataTests.imageErrorCreatedNotName));
+		assertThrows(ImageConvertException.class, () -> imageValidatorDomainService.validateImage(ImageDataTests.imageErrorCreatedNotBody));
+		assertThrows(ImageConvertException.class, () -> imageValidatorDomainService.validateImage(ImageDataTests.imageErrorCreatedBodyEmpty));
 	}
 
 }

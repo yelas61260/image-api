@@ -13,15 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImageDTO implements Serializable {
+public class ImageDto implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@NotBlank
-	private int resourceId;
-	
-	@NotBlank
-	private int associationType;
+	private String imageId;
 	
 	@NotBlank
 	private String imageName;

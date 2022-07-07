@@ -3,14 +3,13 @@ package com.pragma.route.backend.image.application.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Base64;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.pragma.route.backend.image.ImageFileDataTests;
 import com.pragma.route.backend.image.application.service.ImageConverterService;
 import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
@@ -22,39 +21,34 @@ public class ImageConverterServiceImplTests {
 	private ImageConverterDomainService imageConverterDomainService;
 	
 	private ImageConverterService imageConverterService;
-	
-	private String stringBase;
-	private byte[] stringByte;
 
 	@BeforeEach
 	public void setup() {
-		imageConverterService = new ImageConverterServiceImpl(imageConverterDomainService);
-		
-		String originalString = "Contenido";
-		stringBase = Base64.getEncoder().encodeToString(originalString.getBytes());
-		stringByte = Base64.getDecoder().decode(stringBase);		
+		imageConverterService = new ImageConverterServiceImpl(imageConverterDomainService);		
 
-		Mockito.when(imageConverterDomainService.convertBase64StringToImageFile(stringBase)).thenReturn(stringByte);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile("");
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(null);
-		
-		Mockito.when(imageConverterDomainService.convertImageFileToBase64String(stringByte)).thenReturn(stringBase);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(new byte[0]);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(null);
+		Mockito.when(imageConverterDomainService.convertImageFileToBase64String(ImageFileDataTests.stringByteOk)).thenReturn(ImageFileDataTests.stringBaseOk);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorEmpty);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorNull);
+
+		Mockito.when(imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).thenReturn(ImageFileDataTests.stringByteOk);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty);
+		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull);
 	}
 	
 	@Test
 	public void convertImageFileToBase64String() {
-		assertThat(imageConverterService.convertImageFileToBase64String(stringByte)).isEqualTo(stringBase);
-		assertThrows(ImageConvertException.class, () -> imageConverterService.convertImageFileToBase64String(null));
-		assertThrows(ImageConvertException.class, () -> imageConverterService.convertImageFileToBase64String(new byte[0]));
+		assertThat(imageConverterService.convertImageFileToBase64String(ImageFileDataTests.stringByteOk)).isEqualTo(ImageFileDataTests.stringBaseOk);
+		assertThrows(ImageConvertException.class, () -> imageConverterService.convertImageFileToBase64String(ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageConverterService.convertImageFileToBase64String(ImageFileDataTests.stringByteErrorNull));
 	}
 
 	@Test
 	public void convertBase64StringToImageFile() {
-		assertThat(imageConverterService.convertBase64StringToImageFile(stringBase)).isEqualTo(stringByte);
-		assertThrows(ImageConvertException.class, () -> imageConverterService.convertBase64StringToImageFile(null));
-		assertThrows(ImageConvertException.class, () -> imageConverterService.convertBase64StringToImageFile(""));
+		assertThat(imageConverterService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).isEqualTo(ImageFileDataTests.stringByteOk);
+		assertThrows(ImageConvertException.class, () -> imageConverterService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent));
+		assertThrows(ImageConvertException.class, () -> imageConverterService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageConverterService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull));
 	}
 
 }

@@ -1,11 +1,11 @@
 package com.pragma.route.backend.image.application.service;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 
 public interface ImageService {
 	
-	public ImageDTO getByAssociationTypeAndResourceId(int associationType, int resourceId);
-	public ImageDTO prepareToCreate(int associationType, int resourceId, String imageName, byte[] imageFile);
-	public ImageDTO prepareToUpdate(int associationType, int resourceId, String imageName, byte[] imageFile);
+	public ImageDto getById(ImageDto imageDTO);
+	public ImageDto prepareToCreate(ImageDto imageDTO, byte[] imageFile);
+	public ImageDto prepareToUpdate(ImageDto imageDTO, byte[] imageFile);
 	
 }

@@ -1,5 +1,7 @@
 package com.pragma.route.backend.image.domain.service.impl;
 
+import com.pragma.route.backend.image.domain.exception.conflict.ImageIdConflictException;
+import com.pragma.route.backend.image.domain.exception.conflict.ImageIdRequiredException;
 import com.pragma.route.backend.image.domain.model.Image;
 import com.pragma.route.backend.image.domain.service.ImageDomainService;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
@@ -14,43 +16,37 @@ public class ImageDomainServiceImpl implements ImageDomainService {
 	private final ImageConverterDomainService imageConverterDomainService;
 
 	@Override
-	public Image prepareToCreate(int associationType, int resourceId, String imageName, byte[] imageFile) {
-		Image image = Image.builder()
-				.associationType(associationType)
-				.resourceId(resourceId)
-				.imageName(imageName)
-				.bodyBase64(this.imageConverterDomainService.convertImageFileToBase64String(imageFile))
-				.build();
-		
-		imageValidatorService.validateImage(image);
+	public Image prepareToCreate(Image image, byte[] imageFile) {
+		if (image.getImageId() != null) {
+			throw new ImageIdConflictException();
+		}
+		Image imageResponse = image.clone();
+		imageResponse.setBodyBase64(this.imageConverterDomainService.convertImageFileToBase64String(imageFile));		
+		imageValidatorService.validateImage(imageResponse);
 			
-		return image;
+		return imageResponse;
 	}
 
 	@Override
-	public Image prepareToUpdate(int associationType, int resourceId, String imageName, byte[] imageFile) {
-		Image image = Image.builder()
-				.associationType(associationType)
-				.resourceId(resourceId)
-				.imageName(imageName)
-				.bodyBase64(this.imageConverterDomainService.convertImageFileToBase64String(imageFile))
-				.build();
-		
-		imageValidatorService.validateImage(image);
+	public Image prepareToUpdate(Image image, byte[] imageFile) {
+		if (image.getImageId() == null) {
+			throw new ImageIdRequiredException();
+		}
+		Image imageResponse = image.clone();
+		imageResponse.setBodyBase64(this.imageConverterDomainService.convertImageFileToBase64String(imageFile));		
+		imageValidatorService.validateImage(imageResponse);
 
-		return image;
+		return imageResponse;
 	}
 
 	@Override
-	public Image getByAssociationTypeAndResourceId(int associationType, int resourceId) {
-		Image image = Image.builder()
-				.associationType(associationType)
-				.resourceId(resourceId)
-				.build();
-		
-		imageValidatorService.validateImage(image);
-		
-		return image;
+	public Image getById(Image image) {
+		Image imageResponse = image.clone();
+		if (imageResponse.getImageId() == null || imageResponse.getImageId().isEmpty()) {
+			throw new ImageIdRequiredException();
+		}
+		imageValidatorService.validateImage(imageResponse);
+		return imageResponse;
 	}
 
 }

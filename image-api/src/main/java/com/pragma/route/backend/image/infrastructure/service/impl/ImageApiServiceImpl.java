@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 import com.pragma.route.backend.image.application.service.ImageConverterService;
 import com.pragma.route.backend.image.application.service.ImageService;
 import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
@@ -22,10 +22,13 @@ public class ImageApiServiceImpl implements ImageApiService {
 	private final ImageRepository imageRepository;
 
 	@Override
-	public ImageDTO create(int associationType, int resourceId, MultipartFile imageFile) {
-		ImageDTO imageDTO = null;
+	public ImageDto create(MultipartFile imageFile) {
+		ImageDto imageDTO = null;
 		try {
-			imageDTO = imageService.prepareToCreate(associationType, resourceId, imageFile.getName(), imageFile.getBytes());
+			imageDTO = ImageDto.builder()
+					.imageName(imageFile.getName())
+					.build();
+			imageDTO = imageService.prepareToCreate(imageDTO, imageFile.getBytes());
 		} catch (IOException e) {
 			throw new ImageConvertException();
 		} catch (NullPointerException e) {
@@ -35,10 +38,14 @@ public class ImageApiServiceImpl implements ImageApiService {
 	}
 
 	@Override
-	public ImageDTO update(int associationType, int resourceId, MultipartFile imageFile) {
-		ImageDTO imageDTO = null;
+	public ImageDto update(String imageId, MultipartFile imageFile) {
+		ImageDto imageDTO = null;
 		try {
-			imageDTO = imageService.prepareToUpdate(associationType, resourceId, imageFile.getName(), imageFile.getBytes());
+			imageDTO = ImageDto.builder()
+					.imageId(imageId)
+					.imageName(imageFile.getName())
+					.build();
+			imageDTO = imageService.prepareToUpdate(imageDTO, imageFile.getBytes());
 		} catch (IOException e) {
 			throw new ImageConvertException();
 		} catch (NullPointerException e) {
@@ -48,22 +55,22 @@ public class ImageApiServiceImpl implements ImageApiService {
 	}
 
 	@Override
-	public String getImageBase64(int associationType, int resourceId) {
-		ImageDTO imageDTO = imageService.getByAssociationTypeAndResourceId(associationType, resourceId);
-		imageDTO = imageRepository.getById(imageDTO);
+	public String getImageBase64(String imageId) {
+		ImageDto imageDTO = imageRepository.getById(imageId);
 		if (imageDTO == null) {
 			throw new ImageNotFoundException();
 		}
+		imageDTO = imageService.getById(imageDTO);
 		return imageDTO.getImageBase64();
 	}
 
 	@Override
-	public byte[] getImageFile(int associationType, int resourceId) {
-		ImageDTO imageDTO = imageService.getByAssociationTypeAndResourceId(associationType, resourceId);
-		imageDTO = imageRepository.getById(imageDTO);
+	public byte[] getImageFile(String imageId) {
+		ImageDto imageDTO = imageRepository.getById(imageId);
 		if (imageDTO == null) {
 			throw new ImageNotFoundException();
 		}
+		imageDTO = imageService.getById(imageDTO);
 		return imageConverterService.convertBase64StringToImageFile(imageDTO.getImageBase64());
 	}
 

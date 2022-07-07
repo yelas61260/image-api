@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 import com.pragma.route.backend.image.infrastructure.db.dao.ImageDao;
 import com.pragma.route.backend.image.infrastructure.db.entity.ImageMongoEntity;
 import com.pragma.route.backend.image.infrastructure.db.mapper.ImageMongoEntityWithDtoMapper;
@@ -20,9 +20,8 @@ public class ImageRepositoryImpl implements ImageRepository {
 	private final ImageMongoEntityWithDtoMapper imageMongoEntityWithDtoMapper;
 
 	@Override
-	public ImageDTO getById(ImageDTO imageDTO) {
-		ImageMongoEntity imageMongoEntity = imageMongoEntityWithDtoMapper.toMongoEntity(imageDTO);
-		Optional<ImageMongoEntity> imageEntity = imageDao.findById(imageMongoEntity.getId());
+	public ImageDto getById(String imageId) {
+		Optional<ImageMongoEntity> imageEntity = imageDao.findById(imageId);
 		if (imageEntity.isEmpty()) {
 			return null;
 		} else {
@@ -31,13 +30,13 @@ public class ImageRepositoryImpl implements ImageRepository {
 	}
 
 	@Override
-	public ImageDTO create(ImageDTO imageDTO) {
+	public ImageDto create(ImageDto imageDTO) {
 		ImageMongoEntity imageMongoEntity = imageMongoEntityWithDtoMapper.toMongoEntity(imageDTO);
 		return imageMongoEntityWithDtoMapper.toDto(imageDao.insert(imageMongoEntity));
 	}
 
 	@Override
-	public ImageDTO update(ImageDTO imageDTO) {
+	public ImageDto update(ImageDto imageDTO) {
 		ImageMongoEntity imageMongoEntity = imageMongoEntityWithDtoMapper.toMongoEntity(imageDTO);
 		return imageMongoEntityWithDtoMapper.toDto(imageDao.save(imageMongoEntity));
 	}

@@ -3,12 +3,11 @@ package com.pragma.route.backend.image.domain.service.impl.util.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Base64;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.pragma.route.backend.image.ImageFileDataTests;
 import com.pragma.route.backend.image.domain.exception.conflict.ImageConvertException;
 import com.pragma.route.backend.image.domain.service.util.ImageConverterDomainService;
 import com.pragma.route.backend.image.domain.service.util.impl.ImageConverterDomainServiceImpl;
@@ -25,24 +24,17 @@ public class ImageConverterDomainServiceImplTests {
 	
 	@Test
 	public void convertImageFileToBase64String() {
-		String originalString = "Contenido";
-		String stringBase = Base64.getEncoder().encodeToString(originalString.getBytes());
-		byte[] stringByte = Base64.getDecoder().decode(stringBase);
-		byte[] stringByteError = new byte[0];
-		
-		assertThat(imageConverterDomainService.convertImageFileToBase64String(stringByte)).isEqualTo(stringBase);
-		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertImageFileToBase64String(stringByteError));
+		assertThat(imageConverterDomainService.convertImageFileToBase64String(ImageFileDataTests.stringByteOk)).isEqualTo(ImageFileDataTests.stringBaseOk);
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertImageFileToBase64String(ImageFileDataTests.stringByteErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertImageFileToBase64String(ImageFileDataTests.stringByteErrorNull));
 	}
 
 	@Test
-	public void convertBase64StringToImageFile() {
-		String originalString = "Contenido";
-		String stringBase = Base64.getEncoder().encodeToString(originalString.getBytes());
-		byte[] stringByte = Base64.getDecoder().decode(stringBase);
-		String stringError = null;
-
-		assertThat(imageConverterDomainService.convertBase64StringToImageFile(stringBase)).isEqualTo(stringByte);
-		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(stringError));
+	public void convertBase64StringToImageFile() {	
+		assertThat(imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).isEqualTo(ImageFileDataTests.stringByteOk);
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent));
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty));
+		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull));
 	}
 	
 }

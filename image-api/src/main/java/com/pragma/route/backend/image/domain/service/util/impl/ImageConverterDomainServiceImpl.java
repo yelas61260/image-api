@@ -9,7 +9,7 @@ public class ImageConverterDomainServiceImpl implements ImageConverterDomainServ
 
 	@Override
 	public String convertImageFileToBase64String(byte[] imageFile) {
-		if (imageFile.length == 0) {
+		if (imageFile == null || imageFile.length == 0) {
 			throw new ImageConvertException();
 		}
 		try {

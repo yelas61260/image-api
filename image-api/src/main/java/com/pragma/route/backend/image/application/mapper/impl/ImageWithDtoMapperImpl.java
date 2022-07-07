@@ -1,6 +1,6 @@
 package com.pragma.route.backend.image.application.mapper.impl;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 import com.pragma.route.backend.image.application.mapper.ImageWithDtoMapper;
 import com.pragma.route.backend.image.domain.model.Image;
 
@@ -10,21 +10,19 @@ import lombok.AllArgsConstructor;
 public class ImageWithDtoMapperImpl implements ImageWithDtoMapper {
 
 	@Override
-	public ImageDTO toDto(Image imageEntity) {
-		return ImageDTO.builder()
+	public ImageDto toDto(Image imageEntity) {
+		return ImageDto.builder()
+				.imageId(imageEntity.getImageId())
 				.imageBase64(imageEntity.getBodyBase64())
-				.associationType(imageEntity.getAssociationType())
-				.resourceId(imageEntity.getResourceId())
 				.imageName(imageEntity.getImageName())
 				.build();
 	}
 
 	@Override
-	public Image toEntity(ImageDTO imageDTO) {
+	public Image toEntity(ImageDto imageDTO) {
 		return Image.builder()
+				.imageId(imageDTO.getImageId())
 				.bodyBase64(imageDTO.getImageBase64())
-				.associationType(imageDTO.getAssociationType())
-				.resourceId(imageDTO.getResourceId())
 				.imageName(imageDTO.getImageName())
 				.build();
 	}

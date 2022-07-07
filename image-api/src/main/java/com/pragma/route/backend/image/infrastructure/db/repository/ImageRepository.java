@@ -1,11 +1,11 @@
 package com.pragma.route.backend.image.infrastructure.db.repository;
 
-import com.pragma.route.backend.image.application.dto.ImageDTO;
+import com.pragma.route.backend.image.application.dto.ImageDto;
 
 public interface ImageRepository {
 	
-	public ImageDTO getById(ImageDTO imageDTO);
-	public ImageDTO create(ImageDTO imageDTO);
-	public ImageDTO update(ImageDTO imageDTO);
+	public ImageDto getById(String imageId);
+	public ImageDto create(ImageDto imageDTO);
+	public ImageDto update(ImageDto imageDTO);
 
 }
