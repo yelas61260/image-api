@@ -3,11 +3,14 @@ package com.pragma.route.backend.image.infrastructure.service.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.InputStream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.pragma.route.backend.image.ImageDtoDataTests;
 import com.pragma.route.backend.image.ImageFileDataTests;
@@ -50,7 +53,6 @@ public class ImageApiServiceImplTests {
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorEmpty);
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorNull);
 		Mockito.when(imageConverterService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).thenReturn(ImageFileDataTests.stringByteOk);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent);
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty);
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull);
 
@@ -91,6 +93,8 @@ public class ImageApiServiceImplTests {
 		assertThat(imageApiService.create(ImageFileDataTests.multipartFileOk)).isEqualTo(ImageDtoDataTests.imageOKCreated);
 		assertThrows(ImageConvertException.class, () -> imageApiService.create(ImageFileDataTests.multipartFileErrorEmpty));
 		assertThrows(ImageConvertException.class, () -> imageApiService.create(ImageFileDataTests.multipartFileErrorNull));
+		assertThrows(ImageConvertException.class, () -> imageApiService.create(new MockMultipartFile("mi imagen", InputStream.nullInputStream())));
+		assertThrows(ImageConvertException.class, () -> imageApiService.create(null));
 	}
 
 	@Test
@@ -99,6 +103,8 @@ public class ImageApiServiceImplTests {
 		assertThrows(ImageIdRequiredException.class, () -> imageApiService.update(ImageDtoDataTests.imageOKToCreate.getImageId(), ImageFileDataTests.multipartFileOk));
 		assertThrows(ImageConvertException.class, () -> imageApiService.update(ImageDtoDataTests.imageOKUpdated.getImageId(), ImageFileDataTests.multipartFileErrorEmpty));
 		assertThrows(ImageConvertException.class, () -> imageApiService.update(ImageDtoDataTests.imageOKUpdated.getImageId(), ImageFileDataTests.multipartFileErrorNull));
+		assertThrows(ImageConvertException.class, () -> imageApiService.update(ImageDtoDataTests.imageOKUpdated.getImageId(), new MockMultipartFile("mi imagen", InputStream.nullInputStream())));
+		assertThrows(ImageConvertException.class, () -> imageApiService.update(ImageDtoDataTests.imageOKUpdated.getImageId(), null));
 	}
 
 	@Test

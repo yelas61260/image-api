@@ -24,5 +24,13 @@ public class ImageDto implements Serializable {
 	
 	@NotBlank
 	private String imageBase64;
+	
+	public ImageDto clone() {
+		return ImageDto.builder()
+				.imageId(imageId)
+				.imageName(imageName)
+				.imageBase64(imageBase64)
+				.build();
+	}
 
 }

@@ -32,7 +32,6 @@ public class ImageConverterDomainServiceImplTests {
 	@Test
 	public void convertBase64StringToImageFile() {	
 		assertThat(imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).isEqualTo(ImageFileDataTests.stringByteOk);
-		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent));
 		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty));
 		assertThrows(ImageConvertException.class, () -> imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull));
 	}

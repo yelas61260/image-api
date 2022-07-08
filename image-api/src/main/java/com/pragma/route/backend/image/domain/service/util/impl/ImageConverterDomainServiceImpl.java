@@ -12,11 +12,7 @@ public class ImageConverterDomainServiceImpl implements ImageConverterDomainServ
 		if (imageFile == null || imageFile.length == 0) {
 			throw new ImageConvertException();
 		}
-		try {
-			return Base64.getEncoder().encodeToString(imageFile);
-		} catch (Exception e) {
-			throw new ImageConvertException();
-		}
+		return Base64.getEncoder().encodeToString(imageFile);
 	}
 
 	@Override
@@ -24,11 +20,7 @@ public class ImageConverterDomainServiceImpl implements ImageConverterDomainServ
 		if (imageString == null || imageString.length() == 0) {
 			throw new ImageConvertException();
 		}
-		try {			
-			return Base64.getDecoder().decode(imageString);
-		} catch (Exception e) {
-			throw new ImageConvertException();
-		}
+		return Base64.getDecoder().decode(imageString);
 	}
 	
 }

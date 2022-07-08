@@ -7,9 +7,8 @@ import org.springframework.mock.web.MockMultipartFile;
 
 @SpringBootTest
 public class ImageFileDataTests {
-	
+
 	public static String stringBaseOk = Base64.getEncoder().encodeToString("Contenido".getBytes());
-	public static String stringBaseErrorContent = "Error de contenido";
 	public static String stringBaseErrorEmpty = "";
 	public static String stringBaseErrorNull = null;
 	public static byte[] stringByteOk = Base64.getDecoder().decode(stringBaseOk);

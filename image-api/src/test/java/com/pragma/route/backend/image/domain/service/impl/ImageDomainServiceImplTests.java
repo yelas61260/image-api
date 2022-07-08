@@ -37,7 +37,6 @@ public class ImageDomainServiceImplTests {
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorEmpty);
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertImageFileToBase64String(ImageFileDataTests.stringByteErrorNull);
 		Mockito.when(imageConverterDomainService.convertBase64StringToImageFile(ImageFileDataTests.stringBaseOk)).thenReturn(ImageFileDataTests.stringByteOk);
-		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorContent);
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorEmpty);
 		Mockito.doThrow(ImageConvertException.class).when(imageConverterDomainService).convertBase64StringToImageFile(ImageFileDataTests.stringBaseErrorNull);
 		
