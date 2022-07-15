@@ -17,6 +17,7 @@
 		<java.version>18</java.version>
 	</properties>
 	<dependencies>
+		<!-- dependencias para api rest no reactivo -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -25,29 +26,35 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		
+		<!-- dependencias para lombock -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		
+		<!-- dependencia para los mapper -->
 		<dependency>
 		    <groupId>org.mapstruct</groupId>
 		    <artifactId>mapstruct</artifactId>
 		    <version>1.5.1.Final</version>
 		</dependency>
+		
+		<!-- dependencia para el uso de multipart file -->
 		<dependency>
 		    <groupId>commons-io</groupId>
 		    <artifactId>commons-io</artifactId>
 		    <version>2.11.0</version>
 		</dependency>
 		
+		<!-- dependencias para el manejo de swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 	    	<artifactId>springdoc-openapi-ui</artifactId>
